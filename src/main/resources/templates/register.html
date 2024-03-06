@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="reg-container">
+    <img class="reg-left-image" src="/image/reg_left_background.png" alt="">
+    <div class="reg-right-form">
+        <form id="regForm" action="/register" method="post">
+            <input type="text" id="username" name="username" placeholder="请输入账号"><br>
+            <input type="password" id="password" name="password" placeholder="请输入密码"><br>
+            <div id="error-message" style="color: red;"></div>
+            <input type="submit" value="注 册">
+            <a href="/login">返回登录</a>
+        </form>
+    </div>
+</div>
+<script src="/js/RegPost.js"></script>
+</body>
+</html>

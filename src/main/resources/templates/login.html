@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登录</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="login-container">
+        <img class="login-left-image" src="/image/login_left_background.png" alt="">
+        <div class="login-right-form">
+            <form id="loginForm" action="/login" method="post">
+                <input type="text" id="username" name="username" placeholder="请输入账号"><br>
+                <input type="password" id="password" name="password" placeholder="请输入密码"><br>
+                <div id="error-message" style="color: red;"></div>
+                <input type="submit" value="登 录">
+                <a href="/register">点击注册</a>
+            </form>
+        </div>
+    </div>
+    <script src="/js/LoginPost.js"></script>
+</body>
+</html>
