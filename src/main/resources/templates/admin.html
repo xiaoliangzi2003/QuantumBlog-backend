@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Article Detail</title>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background-color: white;
+            background-size: cover;
+            margin:0;
+            padding:0;
+            overflow-x: hidden;
+            max-width: 100%;
+        }
+
+        code{
+            display: inline; /* 让代码块与其他文本内容在同一行 */
+            background-color: #f4f4f4; /* 添加灰色背景 */
+            padding: 2px 4px; /* 添加一些内边距，使代码块内容与背景有一定间距 */
+            border-radius: 4px; /* 添加一些圆角 */
+        }
+
+        pre code {
+            background-color: black  !important;;
+            color: #ffffff;
+            padding: 10px; /* 添加一些内边距 */
+            display: block; /* 让代码段占据整个行 */
+            overflow-x: auto; /* 如果代码段太长，添加滚动条 */
+            border:none;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.9);
+            box-shadow: 0 0 30px rgba(0,0,0,1);
+            width: 100%;
+            padding: 20px 50px;
+            margin:0;
+        }
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        nav ul li {
+            margin-right: 40px;
+        }
+        nav ul li:last-child {
+            margin-right: 0;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size:15px;
+        }
+        nav ul li a:hover {
+            color: #efecec;
+            transform:scale(1.1);
+        }
+        nav input[type="search"] {
+            padding: 10px;
+            margin-right: 100px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            align-items: center;
+        }
+
+        .article-info h1 {
+            text-align: center;
+            flex-grow: 2; /* 让标题占据更多的空间，以保证居中 */
+        }
+
+        .article-info p {
+            flex-grow: 1; /* 让作者和日期占据较少的空间，以保证它们位于两侧 */
+        }
+
+        .logo{
+            font-size: 30px;
+            color: white;
+        }
+
+        img {
+            background: none;
+        }
+
+        .article-info h1 {
+            text-align: center;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .main-body {
+            display: flex;
+            justify-content: space-between;
+            margin: 0 80px;
+            padding: 40px;
+
+        }
+        .admin-panel{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.8);
+            font-size: 24px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .article-categories ul {
+            list-style-type: none;
+        }
+
+        .article-categories li {
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+
+        .article-categories a{
+            text-decoration: none; /* 去除下划线 */
+            color: black; /* 设置颜色为黑色 */
+            font-weight: bold; /* 加粗 */
+        }
+
+    </style>
+</head>
+<body>
+<nav class="navigation">
+    <div class="logo">量子论坛</div>
+    <ul>
+        <li><a href="#">首页</a></li>
+        <li><a href="#">发现</a></li>
+        <li><a href="#">论坛</a></li>
+        <li><a href="#">留言</a></li>
+        <li><a href="#">个人中心</a></li>
+    </ul>
+    <input type="search" placeholder="搜索">
+</nav>
+<div class="main-body">
+    <div class="admin-panel">
+        <ul>
+            <li><a href="#">文章管理</a></li>
+            <li><a href="#">用户管理</a></li>
+            <li><a href="#">评论管理</a></li>
+        </ul>
+    </div>
+</div>
+</body>
+
+<script>
+    // 文章管理点击事件
+    document.querySelector('a[href="#文章管理"]').addEventListener('click', function (e) {
+        e.preventDefault();
+        axios.get('/blog/article-list')
+            .then(function (response) {
+                // 使用返回的数据更新页面内容
+                // 这里需要根据实际的数据结构和页面结构进行修改
+                document.querySelector('.main-body').innerHTML = response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    });
+
+    // 用户管理点击事件
+    document.querySelector('a[href="#用户管理"]').addEventListener('click', function (e) {
+        e.preventDefault();
+        axios.get('')
+            .then(function (response) {
+                // 使用返回的数据更新页面内容
+                // 这里需要根据实际的数据结构和页面结构进行修改
+                document.querySelector('.main-body').innerHTML = response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    });
+
+    // 评论管理点击事件
+    document.querySelector('a[href="#评论管理"]').addEventListener('click', function (e) {
+        e.preventDefault();
+        axios.get('/path/to/comment/data')
+            .then(function (response) {
+                // 使用返回的数据更新页面内容
+                // 这里需要根据实际的数据结构和页面结构进行修改
+                document.querySelector('.main-body').innerHTML = response.data;
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    });
+</script>
+</html>

@@ -2,37 +2,83 @@ package org.example.quantumblog.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-import org.example.quantumblog.entity.user.User;
+import org.example.quantumblog.model.User;
+
+import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * @author xiaol
+ *
  */
 @Mapper
 public interface UserMapper {
     @Select("SELECT * FROM user WHERE id = #{id}")
-    public User getUserById(String id);
+    User getUserById(String id);
 
     @Select("SELECT * FROM user WHERE username = #{username}")
-    public User getUserByUsername(String username);
+    User getUserByUsername(String username);
 
-    @Select("SELECT * FROM user WHERE username = #{username}AND password = #{password}")
-    public User getUserByUsernameAndPassword(String username,String password);
+    @Select("SELECT * FROM user WHERE username = #{username} AND password = #{password}")
+    User getUserByUsernameAndPassword(String username,String password);
+
+    @Select("SELECT * FROM user WHERE email = #{email} AND password = #{password}")
+    User getUserByEmailAndPassword(String email, String password);
 
     @Select("SELECT * FROM user WHERE email = #{email}")
-    public User getUserByEmail(String email);
+    User getUserByEmail(String email);
 
     @Select("SELECT * FROM user WHERE phone = #{phone}")
-    public User getUserByPhone(String phone);
+    User getUserByPhone(String phone);
 
-    @Select("SELECT * FROM user WHERE username = #{username}AND email = #{email}")
-    public User getUserByUsernameAndEmail(String username,String email);
+    @Select("SELECT * FROM user WHERE username = #{username} AND email = #{email}")
+    User getUserByUsernameAndEmail(String username,String email);
 
     @Select("INSERT INTO user (id, username, password,email,phone) VALUES (#{id}, #{username}, #{password},#{email},#{phone})")
-    public void insertUser(User user);
+    void insertUser(User user);
 
     @Select("UPDATE user SET username = #{username}, password = #{password} WHERE id = #{id}")
-    public void updateUser(User user);
+    void updateUser(User user);
 
     @Select("DELETE FROM user WHERE id = #{id}")
-    public void deleteUser(String id);
+    void deleteUser(String id);
+
+    @Select("SELECT * FROM user WHERE phone = #{phone} AND password = #{password}")
+    User getUserByPhoneAndPassword(String phone, String password);
+
+    @Select("UPDATE user SET email = #{newEmail} WHERE username = #{username} AND password = #{password}")
+    void updateEmail(String username, String password, String newEmail);
+
+    @Select("UPDATE user SET phone = #{newPhone} WHERE username = #{username} AND password = #{password}")
+    void updatePhone(String username, String password, String newPhone);
+
+    @Select("UPDATE user SET password = #{newPassword} WHERE username = #{username} AND password = #{oldPassword}")
+    void updatePassword(String username, String oldPassword, String newPassword);
+
+    @Select("SELECT * FROM user")
+    List<User> getAllUser();
+
+    @Select("UPDATE user SET status = #{status} WHERE username = #{username}")
+    void updateStatus(String username, String status);
+
+    @Select("SELECT status FROM user WHERE username = #{username}")
+    String getStatus(String username);
+
+    @Select("UPDATE user SET lastLoginTime = #{lastLoginTime} WHERE username = #{username}")
+    void updateLoginTime(String username, Timestamp lastLoginTime);
+
+    @Select("SELECT password FROM user WHERE username = #{username}")
+    String getPasswordByUsername(String username);
+
+    @Select("SELECT password FROM user WHERE email = #{email}")
+    String getPasswordByEmail(String email);
+
+    @Select("SELECT password FROM user WHERE phone = #{phone}")
+    String getPasswordByPhone(String phone);
+
+    @Select("SELECT username FROM user WHERE email = #{email}")
+    String getUsernameByEmail(String email);
+
+    @Select("SELECT username FROM user WHERE phone = #{phone}")
+    String getUsernameByPhone(String phone);
 }

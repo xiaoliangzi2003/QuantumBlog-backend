@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <title>Quantum Blog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            height: 100%;
+        }
+        body {
+            height: 100%;
+            background-image:url("/image/common/authBackground.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center, center;
+        }
+        .container {
+            height: 100%;
+            /*background-image: linear-gradient(to right, #f6d365, #fda085);*/
+        }
+        .login-wrapper {
+            background-color: rgba(255, 255, 255, 0.8);
+            width: 400px;
+            height: 700px;
+            border-radius: 15px;
+            padding: 0 50px;
+            position: relative;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+
+        }
+        .header {
+            font-size: 38px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 200px;
+        }
+        .input-item {
+            display: block;
+            width: 100%;
+            margin-bottom: 20px;
+            border: 1px solid gray;
+            padding: 10px;
+            border-bottom: 1px solid rgb(128, 125, 125);
+            font-size: 15px;
+            outline: none;
+        }
+        .input-item::placeholder {
+            text-transform: uppercase;
+        }
+        .btn {
+            border: none;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+            margin-top: 40px;
+            background-image: linear-gradient(to right, #96e6a1, #d4fc79);
+            color: rgb(0, 0, 0);
+        }
+        .btn:hover {
+            background-image: linear-gradient(to right, #d4fc79, #96e6a1);
+        }
+        .btn:active {
+            background-image: linear-gradient(to right, #d4fc79, #96e6a1);
+        }
+        .msg {
+            text-align: center;
+            line-height: 88px;
+        }
+        a {
+            text-decoration-line: none;
+            color: #abc1ee;
+        }
+
+        .email-code {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #sendCode {
+            width: 200px;
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        .btn-sendcode {
+            border: none;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+            background-image: linear-gradient(to right, #96e6a1, #d4fc79);
+            color: #000000;
+        }
+        .btn-sendcode:hover {
+            background-image: linear-gradient(to right, #d4fc79, #96e6a1);
+        }
+        .btn-sendcode:active {
+            background-image: linear-gradient(to right, #d4fc79, #96e6a1);
+        }
+    </style>
+</head>
+<body>
+<div class="main-board">
+    <div class="left-image">
+        <img src="/image/common/board-left.jpg" alt="">
+    </div>
+    <div class="container">
+        <div class="login-wrapper">
+            <div class="header">注册你的账号</div>
+            <form class="register-form" id="register-form">
+                <input type="text" id="account" name="account" placeholder="请输入用户名" class="input-item">
+                <input type="email" id="email" name="email" placeholder="请输入邮箱" class="input-item">
+                <div class="email-code">
+                    <input type="text" id="code" name="code" placeholder="请输入邮箱验证码" class="input-item">
+                    <button id="sendCode" class="btn-sendcode">发送验证码</button>
+                </div>
+                <input type="text" id="phone" name="phone" placeholder="请输入手机号" class="input-item">
+                <input type="password" id="password" name="password" placeholder="请输入密码" class="input-item">
+                <input type="submit" id="submit" value="注册" class="btn">
+            </form>
+            <div class="msg">
+                已有账号?
+                <a href="#">返回登录</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+    document.getElementById('sendCode').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        var email = document.getElementById('email').value;
+        axios.post('http://localhost:8080/auth/sendEmail', { to: email })
+            .then(function(response) {
+                // 请求发送成功，开始倒计时
+                var countdown = 60;
+                var sendCodeButton = document.getElementById('sendCode');
+                sendCodeButton.disabled = true; // 禁用按钮
+                var timer = setInterval(function() {
+                    countdown--;
+                    sendCodeButton.innerText = countdown + 's';
+                    if (countdown <= 0) {
+                        clearInterval(timer);
+                        sendCodeButton.innerText = '发送验证码';
+                        sendCodeButton.disabled = false; // 启用按钮
+                    }
+                }, 1000);
+            })
+
+            .catch(function(error) {
+                console.log(error);
+            });
+    });
+
+    document.getElementById('register-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        var account = document.getElementById('account').value;
+        var password = document.getElementById('password').value;
+        var email = document.getElementById('email').value;
+        var phone = document.getElementById('phone').value;
+
+        var code=document.getElementById('code').value;
+
+        var regRequest = {
+            account: {
+                username: account,
+                password: password,
+                email: email,
+                phone: phone
+            },
+            code:code
+        };
+
+        axios.post('http://localhost:8080/auth/registerByEmail', regRequest,{
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            maxRedirects:0
+        }).then(function (response) {
+            console.log(response);
+            if(response.data.statusCode===200){
+                window.location.href='/auth/login';
+            }else{
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: response.data.message,
+                });
+            }
+        }).catch(function (error) {
+            if(error.response){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: error.response.data.message,
+                });
+            }else if(error.request){
+                alert("请求失败");
+            }else{
+                console.log(error);
+            }
+        });
+    });
+
+    document.querySelector('a').addEventListener('click', function(e) {
+        e.preventDefault(); // 阻止<a>标签的默认行为，即跳转到href属性指定的URL
+        window.location.href = '/auth/login'; // 跳转到登录页面
+    });
+</script>
+
+</html>

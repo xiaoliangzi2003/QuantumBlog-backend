@@ -1,29 +1,26 @@
-document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    var username = document.getElementById('username').value;
+import axios from 'axios';
+
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    var account = document.getElementById('account').value;
     var password = document.getElementById('password').value;
 
-    fetch('/login', {
-        method: 'POST',
+    var loginRequest = {
+        account: {
+            account: account,
+            password: password
+        }
+    };
+
+    axios.post('http://localhost:8080/login', loginRequest,{
         headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username: username, password: password }),
+            'Content-Type': 'application/json'
+        }
+    }).then(function (response) {
+        console.log(response);
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.token) {
-                document.cookie = `token=${data.token}`;
-                window.location.href = 'index';
-            } else {
-                document.getElementById('error-message').textContent = '用户名或密码错误';
-            }
-        })
-        .catch((error) => {
-            console.error('Error:', error);
+        .catch(function (error) {
+            console.log(error);
         });
 });
-
-
-
-
