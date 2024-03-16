@@ -11,13 +11,67 @@ import java.util.List;
  */
 @Mapper
 public interface ArticleMapper {
-    @Insert("INSERT INTO Article(id, title, summary, top, authorId, views, likes, comments, collects, forwards, createTimeStamp, updateTimeStamp, author, tags, type, status, url) VALUES(#{id}, #{title}, #{summary}, #{top}, #{authorId}, #{views}, #{likes}, #{comments}, #{collects}, #{forwards}, #{createTimeStamp}, #{updateTimeStamp}, #{author}, #{tags}, #{type}, #{status}, #{url})")
+    @Insert("INSERT INTO Article(" +
+            "id, " +
+            "title, " +
+            "summary, " +
+            "top, " +
+            "authorId," +
+            " views, " +
+            "likes, " +
+            "comments, " +
+            "collects, " +
+            "forwards, " +
+            "createTimeStamp, " +
+            "updateTimeStamp, " +
+            "author, " +
+            "tags, " +
+            "status, " +
+            "category,"+
+            "visibility,"+
+            "url) VALUES(" +
+            "#{id}," +
+            " #{title}, " +
+            "#{summary}, " +
+            "#{top}, " +
+            "#{authorId}, " +
+            "#{views}," +
+            " #{likes}, " +
+            "#{comments}, " +
+            "#{collects}, " +
+            "#{forwards}, " +
+            "#{createTimeStamp}, " +
+            "#{updateTimeStamp}, " +
+            "#{author}, " +
+            "#{tags}, " +
+            " #{status}, " +
+            "#{category},"+
+            " #{visibility},"+
+            " #{url})")
     void addArticle(Article article);
 
     @Delete("DELETE FROM Article WHERE id = #{id}")
     void deleteArticle(Integer id);
 
-    @Update("UPDATE Article SET title = #{title}, summary = #{summary}, top = #{top}, authorId = #{authorId}, views = #{views}, likes = #{likes}, comments = #{comments}, collects = #{collects}, forwards = #{forwards}, createTimeStamp = #{createTimeStamp}, updateTimeStamp = #{updateTimeStamp}, author = #{author}, tags = #{tags}, type = #{type}, status = #{status}, url = #{url} WHERE id = #{id}")
+    @Update("UPDATE Article SET " +
+            "title = #{title}, " +
+            "summary = #{summary}, " +
+            "top = #{top}, " +
+            "authorId = #{authorId}, " +
+            "views = #{views}, " +
+            "likes = #{likes}, " +
+            "comments = #{comments}, " +
+            "collects = #{collects}, " +
+            "forwards = #{forwards}, " +
+            "createTimeStamp = #{createTimeStamp}, " +
+            "updateTimeStamp = #{updateTimeStamp}, " +
+            "author = #{author}, " +
+            "tags = #{tags}, " +
+            "status = #{status}, " +
+            "category = #{category}, " +
+            "visibility = #{visibility}," +
+            "url = #{url} " +
+            "WHERE id = #{id}")
     void updateArticle(Article article);
 
     @Select("SELECT * FROM Article WHERE id = #{id}")

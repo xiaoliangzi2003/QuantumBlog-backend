@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.quantumblog.exception.GlobalException;
 import org.example.quantumblog.mapper.UserMapper;
 import org.example.quantumblog.model.Article;
+import org.example.quantumblog.model.User;
 import org.example.quantumblog.util.MarkdownConverter;
 import org.example.quantumblog.util.Result;
 import org.example.quantumblog.util.TimeUtil;
@@ -46,23 +47,40 @@ public class ArticleController {
     TimeUtil timeUtil=new TimeUtil();
 
     /**
-     * @param article 文章对象
+     * @param articleMap 文章对象
      * @return Result:上传结果
      * @description: 上传文章
      * @path: /blog/publish-article
      * @method: POST
      * */
     @PostMapping("/publish-article")
-    public Result uploadArticle(@RequestBody Article article){
+    public Result publishArticle(@RequestBody Map<String,Object> articleMap){
         try{
-            //上传文章信息到数据库
-            articleSerivce.uploadArticle(article);
-            String author=article.getAuthor();
-            String title=article.getTitle();
-            String content=article.getContent();
+            Article article=new Article();
 
-            //标志位,0表示发布，1表示更新
-            int flag=0;
+            String title=(String) articleMap.get("title");
+            article.setTitle(title);
+
+            String author=(String) articleMap.get("author");
+            article.setAuthor(author);
+
+            User user=userMapper.getUserByUsername(author);
+            //用户名不存在
+            if(user==null){
+                return new Result(Result.ERROR,"用户不存在",null);
+            }
+            //通过用户名获取用户id
+            article.setAuthorId(user.getId());
+
+            String tags=(String) articleMap.get("tags");
+            article.setTags(tags);
+            log.info("tags:"+tags);
+
+
+            article.setCategory((String) articleMap.get("category"));
+
+            article.setVisibility((boolean) articleMap.get("isPublic"));
+
             //写入的文件夹
             String dirPath="src/main/resources/static/articles/"+author+"/"+title+"/";
             File dir=new File(dirPath);
@@ -72,10 +90,17 @@ public class ArticleController {
 
             String filePath=dirPath+author+"_"+title+".md";
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-                writer.write(article.getContent());
+                writer.write((String) articleMap.get("content"));
             } catch (IOException e) {
                 log.error("Error writing to markdown file", e);
                 return new Result(Result.ERROR, "Error writing to markdown file", null);
+            }
+            //如果数据库中可以查到相同标题的文章且作者相同则更新文章
+            if(articleSerivce.getArticleByTitle(title)!=null
+                    && articleSerivce.getArticleByTitle(title).getAuthor().equals(author)){
+                articleSerivce.updateArticle(article);
+            }else {
+                articleSerivce.uploadArticle(article);
             }
             return new Result(Result.OK,"Upload successful",article);
 
@@ -253,6 +278,7 @@ public class ArticleController {
         return modelAndView;
     }
 
+
     /**
      * @param id 文章id
      * @return ModelAndView:文章详情
@@ -405,6 +431,18 @@ public class ArticleController {
             response.put("collects",collects);
             response.put("shares",shares);
             return new Result(Result.OK,"获取文章简要信息成功",response);
+        }catch (Exception e){
+            return new Result(Result.ERROR,e.getMessage(),null);
+        }
+    }
+
+    @PostMapping("/getArticleList")
+    public Result getArticleList(@RequestBody Map<String,Object> map){
+        try{
+            int pageNum=(int) map.get("pageNum");
+            int pageSize=(int) map.get("pageSize");
+            List<Article> articleList= articleSerivce.getArticleListByPage(pageNum,pageSize);
+            return new Result(Result.OK,"获取文章列表成功",articleList);
         }catch (Exception e){
             return new Result(Result.ERROR,e.getMessage(),null);
         }

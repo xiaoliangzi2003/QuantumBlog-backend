@@ -36,4 +36,8 @@ public class User {
     //性别
     private String gender;
 
+    private String wechatCode;
+
+    private String githubCode;
+
 }

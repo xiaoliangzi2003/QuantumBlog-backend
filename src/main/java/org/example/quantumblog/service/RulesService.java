@@ -11,4 +11,7 @@ public interface RulesService {
     public void emailRule(String email);
     public void checkExistRule(String username, String email, String phone,String type);
     public void checkIsRightPassword(String username, String password);
+
+    //检查是否至少绑定了手机或邮箱其中一个
+    boolean checkAtLeastOneBinding(String username);
 }

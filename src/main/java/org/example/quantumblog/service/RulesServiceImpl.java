@@ -3,6 +3,8 @@ package org.example.quantumblog.service;
 import org.example.quantumblog.exception.GlobalException;
 import org.example.quantumblog.mapper.UserMapper;
 import org.example.quantumblog.model.AuthRequest;
+import org.example.quantumblog.model.User;
+import org.example.quantumblog.util.PasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -89,6 +91,20 @@ public class RulesServiceImpl implements RulesService{
 
     @Override
     public void checkIsRightPassword(String username, String password){
-        if(userMapper.getUserByUsernameAndPassword(username,password)==null) throw new GlobalException("用户名和密码不匹配",UNAUTHORIZED);
+        //获取数据库中的密码
+        String storedPassword = userMapper.getPasswordByUsername(username);
+        User user = new User();
+        //查询密码是否匹配
+        if (PasswordEncryptor.verify(password, storedPassword)) {
+            user = userMapper.getUserByUsernameAndPassword(username, storedPassword);
+        } else {
+            throw new GlobalException("用户名和密码不匹配", UNAUTHORIZED);
+        }
+    }
+
+    @Override
+    public boolean checkAtLeastOneBinding(String username) {
+        User user = userMapper.getUserByUsername(username);
+        return user.getEmail() != null || user.getPhone() != null;
     }
 }

@@ -68,10 +68,7 @@ public class ArticleSerivceImpl implements ArticleSerivce {
         if(StringUtils.isBlank(article.getTags())){
             article.setTags("未分类");
         }
-        //如果没有类型，就默认为"原创"
-        if(StringUtils.isBlank(article.getType())){
-            article.setType("原创");
-        }
+
         article.setUrl("/"+article.getId());
         articleMapper.addArticle(article);
     }

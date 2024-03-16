@@ -31,3 +31,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Static ###
+src/main/resources/articles/
+src/main/resources/templates/
+src/main/resources/static/
+src/main/log/
+./node_modules/
+
