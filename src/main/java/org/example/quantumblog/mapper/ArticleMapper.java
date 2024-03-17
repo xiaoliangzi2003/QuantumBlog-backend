@@ -1,7 +1,6 @@
 package org.example.quantumblog.mapper;
 
 import org.apache.ibatis.annotations.*;
-import org.example.quantumblog.cond.ArticleCond;
 import org.example.quantumblog.model.Article;
 
 import java.util.List;
@@ -85,4 +84,17 @@ public interface ArticleMapper {
 
     @Select("SELECT * FROM article WHERE title = #{title}")
     Article getArticleByTitle(String title);
+
+    @Select("SELECT COUNT(*) FROM article")
+    long getTotalArticles();
+
+
+    @Select("SELECT count(0) FROM article WHERE author = #{author}")
+    long getTotalArticlesByAuthor(String author);
+
+    @Select("SELECT * FROM article WHERE author = #{author}")
+    List<Article> getArticleListByAuthor(String author);
+
+    @Select("SELECT * FROM article WHERE title = #{title} AND author = #{author}")
+    Article getArticleByTitleAndAuthor(String title, String author);
 }

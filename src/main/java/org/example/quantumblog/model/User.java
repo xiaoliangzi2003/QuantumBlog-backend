@@ -27,17 +27,8 @@ public class User {
     private Date createTime;
     //上一次登录时间
     private Date lastLoginTime;
-    //个性签名
-    private String personalSignature;
-    //头像url
-    private String avatarUrl;
     //账号类型(普通用户、管理员)
     private String type;
-    //性别
-    private String gender;
-
     private String wechatCode;
-
     private String githubCode;
-
 }

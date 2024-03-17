@@ -3,6 +3,7 @@ import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.example.quantumblog.exception.GlobalException;
 import org.example.quantumblog.mapper.UserMapper;
+import org.example.quantumblog.mapper.UserProfileMapper;
 import org.example.quantumblog.model.AuthRequest;
 import org.example.quantumblog.model.User;
 import org.example.quantumblog.service.EmailService;
@@ -32,6 +33,9 @@ import static org.example.quantumblog.util.Result.*;
 public class AuthServiceImpl implements AuthService {
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    UserProfileMapper userProfileMapper;
 
     @Autowired
     RulesService rulesService;
@@ -156,11 +160,15 @@ public class AuthServiceImpl implements AuthService {
             String encryptedPassword = PasswordEncryptor.encrypt(password);
             user.setPassword(encryptedPassword);
 
+
             userMapper.insertUser(user);
             //注册后直接生成token
             Map<String, Object> response = new HashMap<>();
             response.put("username", user.getUsername());
             response.put("token", JwtUtils.generateToken(user.getUsername(), user.getPassword()));
+
+            userProfileMapper.insertUsername(username);
+
             log.info(response.get("username") + "注册成功");
             return response;
 
@@ -200,8 +208,10 @@ public class AuthServiceImpl implements AuthService {
         try{
             //检查密码是否正确
             rulesService.checkIsRightPassword(username, password);
+            //获取用户ID
+            int id = userMapper.getUserByUsername(username).getId();
             //删除用户
-            userMapper.deleteUser(username);
+            userMapper.deleteUser(id);
         }catch (GlobalException e){
             throw new GlobalException(e.getMessage(), e.getStatusCode());
         }

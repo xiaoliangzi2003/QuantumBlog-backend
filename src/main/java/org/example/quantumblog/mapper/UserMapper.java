@@ -14,7 +14,7 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
     @Select("SELECT * FROM user WHERE id = #{id}")
-    User getUserById(String id);
+    User getUserById(Integer id);
 
     @Select("SELECT * FROM user WHERE username = #{username}")
     User getUserByUsername(String username);
@@ -41,7 +41,7 @@ public interface UserMapper {
     void updateUser(User user);
 
     @Select("DELETE FROM user WHERE id = #{id}")
-    void deleteUser(String id);
+    void deleteUser(Integer id);
 
     @Select("SELECT * FROM user WHERE phone = #{phone} AND password = #{password}")
     User getUserByPhoneAndPassword(String phone, String password);
@@ -81,4 +81,10 @@ public interface UserMapper {
 
     @Select("SELECT username FROM user WHERE phone = #{phone}")
     String getUsernameByPhone(String phone);
+
+    @Select("SELECT avatarUrl FROM user WHERE username = #{username}")
+    String getAvatarByUsername(String username);
+
+    @Select("UPDATE user SET avatarUrl = #{avatarUrl} WHERE username = #{username}")
+    void updateAvatar(String username, String avatarUrl);
 }

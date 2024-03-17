@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.example.quantumblog.exception.GlobalException;
+import org.example.quantumblog.mapper.ArticleMapper;
 import org.example.quantumblog.mapper.UserMapper;
 import org.example.quantumblog.model.Article;
 import org.example.quantumblog.model.User;
@@ -43,6 +44,9 @@ public class ArticleController {
 
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    ArticleMapper articleMapper;
 
     TimeUtil timeUtil=new TimeUtil();
 
@@ -88,6 +92,8 @@ public class ArticleController {
                 dir.mkdirs();
             }
 
+            article.setSummary((String) articleMap.get("summary"));
+
             String filePath=dirPath+author+"_"+title+".md";
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
                 writer.write((String) articleMap.get("content"));
@@ -95,12 +101,14 @@ public class ArticleController {
                 log.error("Error writing to markdown file", e);
                 return new Result(Result.ERROR, "Error writing to markdown file", null);
             }
-            //如果数据库中可以查到相同标题的文章且作者相同则更新文章
-            if(articleSerivce.getArticleByTitle(title)!=null
-                    && articleSerivce.getArticleByTitle(title).getAuthor().equals(author)){
-                articleSerivce.updateArticle(article);
-            }else {
+            if(articleSerivce.getArticleByTitle(title)==null){
                 articleSerivce.uploadArticle(article);
+            }else{
+                if(articleSerivce.getArticleByTitle(title).getAuthor().equals(author)){
+                    articleSerivce.updateArticle(article);
+                }else{
+                    return new Result(Result.ERROR,"文章已存在",null);
+                }
             }
             return new Result(Result.OK,"Upload successful",article);
 
@@ -261,11 +269,11 @@ public class ArticleController {
      * @param pageSize 每页的文章数量
      * @return ModelAndView:文章列表
      * @description: 获取文章列表
-     * @path: /blog/article-list
+     * @path: /blog/get-article-list
      * @method: GET
      * @throw Exception GlobalException
      * */
-    @GetMapping("/article-list")
+    @GetMapping("/get-article-list")
     public ModelAndView index(
             @RequestParam(value = "pageNum", defaultValue = "1",required = false) int pageNum,
             @RequestParam(value = "pageSize", defaultValue = "10",required = false) int pageSize
@@ -436,15 +444,36 @@ public class ArticleController {
         }
     }
 
-    @PostMapping("/getArticleList")
+    @PostMapping("/article-list")
     public Result getArticleList(@RequestBody Map<String,Object> map){
         try{
             int pageNum=(int) map.get("pageNum");
-            int pageSize=(int) map.get("pageSize");
-            List<Article> articleList= articleSerivce.getArticleListByPage(pageNum,pageSize);
-            return new Result(Result.OK,"获取文章列表成功",articleList);
-        }catch (Exception e){
-            return new Result(Result.ERROR,e.getMessage(),null);
+            int pageSize = (int) map.get("pageSize");
+            List<Article> articleList = articleSerivce.getArticleListByPage(pageNum, pageSize);
+            long total=articleMapper.getTotalArticles();
+            Map<String,Object> response=new HashMap<>();
+            response.put("articleList",articleList);
+            response.put("total",total);
+            return new Result(Result.OK, "获取文章列表成功", response);
+        } catch (Exception e) {
+            return new Result(Result.ERROR, e.getMessage(), null);
+        }
+    }
+
+    @PostMapping("/article-list-by-author")
+    public Result getArticleListByAuthor(@RequestBody Map<String,Object> map){
+        try{
+            String author=(String) map.get("author");
+            int pageNum=(int) map.get("pageNum");
+            int pageSize = (int) map.get("pageSize");
+            List<Article> articleList = articleSerivce.getArticleListByAuthor(author,pageNum, pageSize);
+            long total=articleMapper.getTotalArticlesByAuthor(author);
+            Map<String,Object> response=new HashMap<>();
+            response.put("articleList",articleList);
+            response.put("total",total);
+            return new Result(Result.OK, "获取文章列表成功", response);
+        } catch (Exception e) {
+            return new Result(Result.ERROR, e.getMessage(), null);
         }
     }
 

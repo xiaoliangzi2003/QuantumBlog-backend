@@ -61,7 +61,7 @@ public class ArticleSerivceImpl implements ArticleSerivce {
         long nowStamp=now.getTime();
         article.setCreateTimeStamp(nowStamp);
         article.setUpdateTimeStamp(nowStamp);
-        long id=generator.generateUniqueNumber(article.getAuthor(),nowStamp);
+        Integer id=generator.generateUniqueNumber(article.getAuthor(),nowStamp);
         article.setId(id);
         article.setStatus("publish");
         //如果没有标签，就默认为"未分类"
@@ -148,13 +148,13 @@ public class ArticleSerivceImpl implements ArticleSerivce {
         File dir=new File(dirPath);
         FileUtils.deleteDirectory(dir);
 
-        //删除文章
-        articleMapper.deleteArticle(id);
-        //删除文章的评论
-        List<Comment> comments= commentMapper.getCommentListByArticleId(id);
-        for(Comment comment:comments){
-            commentMapper.deleteCommentById(comment.getId());
-        }
+//        //删除文章
+//        articleMapper.deleteArticle(id);
+//        //删除文章的评论
+//        List<Comment> comments= commentMapper.getCommentListByArticleId(id);
+//        for(Comment comment:comments){
+//            commentMapper.deleteCommentById(comment.getId());
+//        }
     }
 
     @Override
@@ -218,5 +218,25 @@ public class ArticleSerivceImpl implements ArticleSerivce {
         Article article = articleMapper.getArticleById(id);
         article.setForwards(article.getForwards() + 1);
         articleMapper.updateArticle(article);
+    }
+
+    @Override
+    public List<Article> getArticleListByAuthor(String author, int pageNum, int pageSize) {
+        if(StringUtils.isBlank(author)){
+            throw new GlobalException("作者为空",NULL_AUTHOR);
+        }
+        if(pageNum<1){
+            throw new GlobalException("页数错误",WRONG_PAGE_NUM);
+        }
+        if(pageSize<1){
+            throw new GlobalException("每页数量错误",WRONG_PAGE_SIZE);
+        }
+        PageHelper.startPage(pageNum,pageSize);
+        return articleMapper.getArticleListByAuthor(author);
+    }
+
+    @Override
+    public Article getArticleByTitleAndAuthor(String title, String author) {
+        return articleMapper.getArticleByTitleAndAuthor(title,author);
     }
 }

@@ -17,7 +17,7 @@ public class Generator {
     }
 
     //ID生成器
-    public long generateUniqueNumber(String username, long timestamp) {
+    public int generateUniqueNumber(String username, long timestamp) {
         Random random = new Random(username.hashCode() + timestamp);
         int number;
         do {

@@ -14,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Article {
     //文章Id 从10000开始自增
-    private long id;
+    private Integer id;
 
     //文章标题
     private String title;

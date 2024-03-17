@@ -4,6 +4,7 @@ import org.example.quantumblog.model.Article;
 import org.springframework.stereotype.Service;
 import com.github.pagehelper.PageInfo;
 
+import javax.net.ssl.SSLSession;
 import java.util.List;
 import java.util.Map;
 
@@ -45,5 +46,9 @@ public interface ArticleSerivce {
     //更新文章的转发量
     void updateArticleForwards(Integer id);
 
+
+    List<Article> getArticleListByAuthor(String author, int pageNum, int pageSize);
+
+    Article getArticleByTitleAndAuthor(String title, String author);
 
 }
